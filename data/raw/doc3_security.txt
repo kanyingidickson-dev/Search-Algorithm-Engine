@@ -1,0 +1,2 @@
+API authentication can be implemented with API keys or JWT.
+Good security practices include least privilege and secure secret storage.

@@ -1,0 +1,2 @@
+PostgreSQL is a powerful open source relational database.
+It supports transactions, indexing, and advanced SQL features.

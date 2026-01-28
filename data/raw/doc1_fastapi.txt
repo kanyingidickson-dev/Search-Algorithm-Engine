@@ -1,0 +1,2 @@
+FastAPI is a modern Python web framework for building APIs.
+It uses type hints for request validation and is designed for high performance.
