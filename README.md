@@ -1,5 +1,7 @@
 # Search Algorithm Engine
 
+![CI](https://github.com/kanyingidickson-dev/Search-Algorithm-Engine/actions/workflows/ci.yml/badge.svg)
+
 A small, handwritten text search engine that indexes local documents and returns ranked results.
 
 This project focuses on core information retrieval fundamentals:
