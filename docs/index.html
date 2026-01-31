@@ -7,42 +7,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
       :root {
-        --bg: #0b1020;
-        --panel: rgba(255, 255, 255, 0.08);
-        --panel2: rgba(255, 255, 255, 0.06);
-        --border: rgba(255, 255, 255, 0.12);
-        --text: rgba(255, 255, 255, 0.92);
-        --muted: rgba(255, 255, 255, 0.70);
-        --muted2: rgba(255, 255, 255, 0.55);
-        --accent: #60a5fa;
+        --bg: #181e2b;
+        --panel: rgba(255,255,255,0.10);
+        --panel2: rgba(255,255,255,0.06);
+        --border: rgba(80,90,120,0.13);
+        --text: #23272f;
+        --muted: #5a6274;
+        --muted2: #9fa6b2;
+        --accent: #3b82f6;
         --accent2: #a78bfa;
-        --good: #34d399;
+        --good: #22c55e;
         --warn: #fbbf24;
-        --bad: #fb7185;
+        --bad: #ef4444;
+        --shadow: 0 2px 16px 0 rgba(40,60,120,0.06);
       }
       * { box-sizing: border-box; }
       body {
         margin: 0;
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
         color: var(--text);
-        background: radial-gradient(900px 500px at 20% 0%, rgba(96, 165, 250, 0.20), transparent 60%),
-          radial-gradient(800px 520px at 80% 10%, rgba(167, 139, 250, 0.18), transparent 60%),
-          radial-gradient(900px 650px at 50% 100%, rgba(52, 211, 153, 0.10), transparent 60%),
-          var(--bg);
+        background: linear-gradient(120deg, #e0e7ef 0%, #f7f9fb 100%) fixed;
+        min-height: 100vh;
       }
       a { color: inherit; }
-      .container { max-width: 1040px; margin: 0 auto; padding: 44px 18px 54px; }
-      .header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
-      .logo { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.10); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+      .container { max-width: 900px; margin: 0 auto; padding: 44px 18px 54px; }
+      .header { display: flex; align-items: center; gap: 18px; margin-bottom: 28px; }
+      .logo { width: 56px; height: 56px; border-radius: 16px; background: #fff; border: 2px solid var(--accent); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; overflow: hidden; }
       .logo img { width: 44px; height: 44px; object-fit: cover; }
       .title { line-height: 1.1; }
-      .title h1 { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
-      .title p { margin: 6px 0 0; color: var(--muted); }
+      .title h1 { margin: 0; font-size: 2.1rem; font-weight: 900; letter-spacing: -0.03em; color: var(--accent); }
+      .title p { margin: 10px 0 0; color: var(--muted); font-size: 1.07rem; font-weight: 500; }
 
-      .grid { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 16px; margin-top: 18px; }
-      @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+      .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 24px; margin-top: 18px; align-items: start; }
+      @media (max-width: 900px) { .grid { grid-template-columns: 1fr; gap: 16px; } }
 
-      .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 14px; backdrop-filter: blur(10px); }
+      .card { background: #fff; border: 1.5px solid var(--border); border-radius: 18px; padding: 22px 18px 18px 18px; box-shadow: var(--shadow); transition: box-shadow 0.2s; }
+      .card:focus-within, .card:hover { box-shadow: 0 4px 24px 0 rgba(80,120,200,0.10); }
       .card h2 { margin: 0 0 10px; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
       .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
       .row > * { flex: none; }
@@ -58,52 +58,62 @@
       }
       .input:focus { border-color: rgba(96,165,250,0.65); box-shadow: 0 0 0 3px rgba(96,165,250,0.12); }
       .btn {
-        background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(167,139,250,0.95));
-        color: #0b1020;
-        border: 0;
+        background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%);
+        color: #fff;
+        border: none;
         border-radius: 12px;
         font-weight: 800;
-        padding: 11px 14px;
+        padding: 11px 22px;
         cursor: pointer;
+        font-size: 1rem;
+        box-shadow: 0 2px 8px 0 rgba(60,100,180,0.06);
+        transition: background 0.18s, box-shadow 0.18s, color 0.18s;
       }
-      .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+      .btn:focus, .btn:hover { background: linear-gradient(90deg, #2563eb 0%, #a78bfa 100%); color: #fff; outline: 2px solid var(--accent2); }
+      .btn:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; }
       .btn.secondary {
-        background: rgba(255,255,255,0.10);
-        color: var(--text);
-        border: 1px solid var(--border);
+        background: #f3f5f8;
+        color: var(--muted);
+        border: 1.5px solid var(--border);
         font-weight: 700;
+        box-shadow: none;
       }
+      .btn.secondary:focus, .btn.secondary:hover { background: #e0e7ef; color: var(--accent); border-color: var(--accent2); }
       .pill {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        border: 1px solid var(--border);
-        background: rgba(255,255,255,0.06);
+        border: 1.5px solid var(--border);
+        background: #f3f5f8;
         color: var(--muted);
-        padding: 8px 10px;
+        padding: 7px 13px;
         border-radius: 999px;
         font-size: 12px;
+        font-weight: 600;
       }
-      .pill strong { color: var(--text); }
+      .pill strong { color: var(--accent); }
       .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }
       .small { font-size: 12px; color: var(--muted2); }
       .split { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
       .kvs { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; font-size: 12px; color: var(--muted); margin-top: 10px; }
       .kvs div:nth-child(odd) { color: var(--muted2); }
 
-      .results { margin-top: 12px; display: grid; gap: 10px; }
-      .result { background: var(--panel2); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+      .results { margin-top: 18px; display: grid; gap: 15px; }
+      .result { background: #f8fafc; border: 1.5px solid var(--border); border-radius: 14px; padding: 18px 14px 14px 18px; box-shadow: 0 1px 8px 0 rgba(80,120,200,0.04); transition: box-shadow 0.18s; }
+      .result:focus-within, .result:hover { box-shadow: 0 2px 16px 0 rgba(80,120,200,0.10); }
       .result .top { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
-      .result .rank { color: var(--muted2); font-size: 12px; }
-      .result .doc { font-weight: 800; }
-      .result .score { margin-left: auto; color: var(--good); font-size: 12px; }
-      .result .snippet { color: var(--muted); margin-top: 6px; line-height: 1.55; }
-      mark { background: rgba(251, 191, 36, 0.18); border: 1px solid rgba(251, 191, 36, 0.25); color: var(--text); padding: 0 2px; border-radius: 4px; }
+      .result .rank { color: var(--muted2); font-size: 12px; font-weight: 600; }
+      .result .doc { font-weight: 800; color: var(--accent); }
+      .result .score { margin-left: auto; color: var(--good); font-size: 12px; font-weight: 700; }
+      .result .snippet { color: var(--muted); margin-top: 6px; line-height: 1.65; font-size: 1.01rem; }
+      mark { background: #ffeeb3; border: none; color: #23272f; padding: 0 2px; border-radius: 4px; box-shadow: 0 0 0 1px #ffeeb3; }
 
-      .error { color: var(--bad); font-weight: 700; }
+      .error { color: var(--bad); font-weight: 700; margin-top: 10px; }
       .ok { color: var(--good); font-weight: 700; }
-      .footer { margin-top: 16px; color: var(--muted2); font-size: 12px; }
-      code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 12px; }
+      .footer { margin-top: 18px; color: var(--muted2); font-size: 13px; }
+      code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 13px; }
+      .spinner { display: inline-block; width: 22px; height: 22px; border: 3px solid #e0e7ef; border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 7px; vertical-align: middle; }
+      @keyframes spin { to { transform: rotate(360deg); } }
     </style>
   </head>
   <body>
@@ -123,7 +133,7 @@
             <div class="row">
               <span class="pill"><strong id="corpusCount">0</strong> docs</span>
               <span class="pill"><strong id="tokenCount">0</strong> terms</span>
-              <span class="pill"><span id="status" class="mono">loading…</span></span>
+              <span class="pill"><span id="status" class="mono"><span id="spinner" class="spinner" style="display:none"></span>loading…</span></span>
             </div>
           </div>
 
@@ -510,9 +520,11 @@
         docsById: new Map(),
       };
 
-      function setStatus(text, kind) {
+      function setStatus(text, kind, showSpinner) {
         els.status.textContent = text;
         els.status.className = "mono" + (kind ? ` ${kind}` : "");
+        const spinner = document.getElementById("spinner");
+        if (spinner) spinner.style.display = showSpinner ? "inline-block" : "none";
       }
 
       function renderResults(items, queryTerms) {
@@ -525,7 +537,7 @@
           const title = doc && doc.title ? doc.title : it.docId;
           const snip = snippetOf(doc ? doc.text : "", queryTerms);
           return `
-            <div class="result">
+            <div class="result" tabindex="0" aria-label="Result ${i+1}: ${escapeHtml(title)}" style="animation: fadein 0.5s cubic-bezier(.33,1.5,.68,1) both; animation-delay: ${i*60}ms;">
               <div class="top">
                 <div class="rank">#${i + 1}</div>
                 <div class="doc">${escapeHtml(title)}</div>
@@ -537,12 +549,18 @@
         }).join("");
         els.results.innerHTML = html;
       }
+      // Card fade-in animation
+      const style = document.createElement('style');
+      style.innerHTML = `@keyframes fadein { from { opacity: 0; transform: translateY(18px);} to { opacity: 1; transform: none; } }`;
+      document.head.appendChild(style);
 
       async function loadCorpusFromJson(url) {
+        setStatus("loading corpus…", null, true);
         const resp = await fetch(url, { cache: "no-store" });
         if (!resp.ok) throw new Error(`Failed to load corpus: ${resp.status}`);
         const data = await resp.json();
         if (!Array.isArray(data)) throw new Error("Invalid corpus.json (expected an array)");
+        setStatus("ready", "ok", false);
         return data.map((d, i) => ({
           id: String(d.id || `doc_${i}`),
           title: String(d.title || d.id || `Document ${i + 1}`),
@@ -551,11 +569,13 @@
       }
 
       async function loadLocalFiles(files) {
+        setStatus("loading files…", null, true);
         const out = [];
         for (const f of files) {
           const text = await f.text();
           out.push({ id: f.name, title: f.name, text });
         }
+        setStatus("ready", "ok", false);
         return out;
       }
 
@@ -571,29 +591,35 @@
 
       function doSearch() {
         els.error.textContent = "";
-        const q = els.query.value || "";
-        let ast;
-        try {
-          ast = parseQuery(q);
-        } catch (e) {
-          els.error.textContent = e && e.message ? e.message : String(e);
-          els.results.innerHTML = "";
-          return;
-        }
+        setStatus("searching…", null, true);
+        setTimeout(() => {
+          const q = els.query.value || "";
+          let ast;
+          try {
+            ast = parseQuery(q);
+          } catch (e) {
+            els.error.textContent = e && e.message ? e.message : String(e);
+            els.results.innerHTML = "";
+            setStatus("ready", "error", false);
+            return;
+          }
 
-        const allDocs = state.idx.docIds;
-        const candidates = evalNode(ast, state.idx, allDocs);
-        const positiveTerms = iterPositiveTerms(ast);
+          const allDocs = state.idx.docIds;
+          const candidates = evalNode(ast, state.idx, allDocs);
+          const positiveTerms = iterPositiveTerms(ast);
 
-        if (positiveTerms.length === 0) {
-          const docIds = Array.from(candidates).sort();
-          const items = docIds.slice(0, 25).map((docId) => ({ docId, score: 0 }));
-          renderResults(items, []);
-          return;
-        }
+          if (positiveTerms.length === 0) {
+            const docIds = Array.from(candidates).sort();
+            const items = docIds.slice(0, 25).map((docId) => ({ docId, score: 0 }));
+            renderResults(items, []);
+            setStatus("ready", "ok", false);
+            return;
+          }
 
-        const ranked = rank(positiveTerms, state.idx, candidates).slice(0, 25);
-        renderResults(ranked, positiveTerms);
+          const ranked = rank(positiveTerms, state.idx, candidates).slice(0, 25);
+          renderResults(ranked, positiveTerms);
+          setStatus("ready", "ok", false);
+        }, 200);
       }
 
       els.searchBtn.addEventListener("click", doSearch);
