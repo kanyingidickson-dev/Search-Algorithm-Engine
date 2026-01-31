@@ -20,7 +20,12 @@ class RankedResult:
     score: float
 
 
-def rank_query(query_terms: list[str], index: InvertedIndex) -> list[RankedResult]:
+def rank_query(
+    query_terms: list[str],
+    index: InvertedIndex,
+    *,
+    candidate_docs: set[str] | None = None,
+) -> list[RankedResult]:
     n_docs = index.document_count
     if n_docs == 0:
         return []
@@ -40,9 +45,14 @@ def rank_query(query_terms: list[str], index: InvertedIndex) -> list[RankedResul
     if q_norm == 0.0:
         return []
 
-    candidate_docs: set[str] = set()
+    term_candidates: set[str] = set()
     for term in query_vec.keys():
-        candidate_docs.update(index.term_to_doc_tf.get(term, {}).keys())
+        term_candidates.update(index.term_to_doc_tf.get(term, {}).keys())
+
+    if candidate_docs is None:
+        candidate_docs = term_candidates
+    else:
+        candidate_docs = candidate_docs & term_candidates
 
     results: list[RankedResult] = []
 
@@ -63,5 +73,5 @@ def rank_query(query_terms: list[str], index: InvertedIndex) -> list[RankedResul
         score = dot / (q_norm * d_norm)
         results.append(RankedResult(doc_id=doc_id, score=score))
 
-    results.sort(key=lambda r: r.score, reverse=True)
+    results.sort(key=lambda r: (-r.score, r.doc_id))
     return results
