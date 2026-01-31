@@ -5,36 +5,635 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Search Algorithm Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #0b1020;
+        --panel: rgba(255, 255, 255, 0.08);
+        --panel2: rgba(255, 255, 255, 0.06);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: rgba(255, 255, 255, 0.92);
+        --muted: rgba(255, 255, 255, 0.70);
+        --muted2: rgba(255, 255, 255, 0.55);
+        --accent: #60a5fa;
+        --accent2: #a78bfa;
+        --good: #34d399;
+        --warn: #fbbf24;
+        --bad: #fb7185;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+        color: var(--text);
+        background: radial-gradient(900px 500px at 20% 0%, rgba(96, 165, 250, 0.20), transparent 60%),
+          radial-gradient(800px 520px at 80% 10%, rgba(167, 139, 250, 0.18), transparent 60%),
+          radial-gradient(900px 650px at 50% 100%, rgba(52, 211, 153, 0.10), transparent 60%),
+          var(--bg);
+      }
+      a { color: inherit; }
+      .container { max-width: 1040px; margin: 0 auto; padding: 44px 18px 54px; }
+      .header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+      .logo { width: 44px; height: 44px; border-radius: 12px; background: rgba(255,255,255,0.10); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+      .logo img { width: 44px; height: 44px; object-fit: cover; }
+      .title { line-height: 1.1; }
+      .title h1 { margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+      .title p { margin: 6px 0 0; color: var(--muted); }
+
+      .grid { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 16px; margin-top: 18px; }
+      @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+      .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 14px; backdrop-filter: blur(10px); }
+      .card h2 { margin: 0 0 10px; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+      .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+      .row > * { flex: none; }
+      .input {
+        width: 100%;
+        background: rgba(0,0,0,0.25);
+        border: 1px solid var(--border);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 12px 12px;
+        font-size: 14px;
+        outline: none;
+      }
+      .input:focus { border-color: rgba(96,165,250,0.65); box-shadow: 0 0 0 3px rgba(96,165,250,0.12); }
+      .btn {
+        background: linear-gradient(135deg, rgba(96,165,250,0.95), rgba(167,139,250,0.95));
+        color: #0b1020;
+        border: 0;
+        border-radius: 12px;
+        font-weight: 800;
+        padding: 11px 14px;
+        cursor: pointer;
+      }
+      .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+      .btn.secondary {
+        background: rgba(255,255,255,0.10);
+        color: var(--text);
+        border: 1px solid var(--border);
+        font-weight: 700;
+      }
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--border);
+        background: rgba(255,255,255,0.06);
+        color: var(--muted);
+        padding: 8px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+      .pill strong { color: var(--text); }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }
+      .small { font-size: 12px; color: var(--muted2); }
+      .split { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+      .kvs { display: grid; grid-template-columns: auto 1fr; gap: 6px 10px; font-size: 12px; color: var(--muted); margin-top: 10px; }
+      .kvs div:nth-child(odd) { color: var(--muted2); }
+
+      .results { margin-top: 12px; display: grid; gap: 10px; }
+      .result { background: var(--panel2); border: 1px solid var(--border); border-radius: 14px; padding: 12px; }
+      .result .top { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+      .result .rank { color: var(--muted2); font-size: 12px; }
+      .result .doc { font-weight: 800; }
+      .result .score { margin-left: auto; color: var(--good); font-size: 12px; }
+      .result .snippet { color: var(--muted); margin-top: 6px; line-height: 1.55; }
+      mark { background: rgba(251, 191, 36, 0.18); border: 1px solid rgba(251, 191, 36, 0.25); color: var(--text); padding: 0 2px; border-radius: 4px; }
+
+      .error { color: var(--bad); font-weight: 700; }
+      .ok { color: var(--good); font-weight: 700; }
+      .footer { margin-top: 16px; color: var(--muted2); font-size: 12px; }
+      code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: 12px; }
+    </style>
   </head>
   <body>
-    <div style="max-width: 860px; margin: 0 auto; padding: 48px 20px; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;">
-      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
-        <img src="public/logo.svg" alt="Search Algorithm Engine" width="56" height="56" />
-        <div>
-          <h1 style="margin: 0; font-size: 32px; font-weight: 700;">Search Algorithm Engine</h1>
-          <p style="margin: 8px 0 0; color: #444;">A small, handwritten text search engine with phrase queries and boolean operators.</p>
+    <div class="container">
+      <div class="header">
+        <div class="logo" aria-hidden="true"><img src="public/logo.svg" alt="" /></div>
+        <div class="title">
+          <h1>Search Algorithm Engine</h1>
+          <p>Interactive demo (no backend): phrase queries, boolean operators, and TF‑IDF ranking in your browser.</p>
         </div>
       </div>
 
-      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0;">
-        <a href="https://github.com/kanyingidickson-dev/Search-Algorithm-Engine" style="display: inline-block; background: #1f2937; color: #fff; padding: 10px 14px; border-radius: 8px; text-decoration: none; font-weight: 600;">View Repository</a>
-        <a href="https://github.com/kanyingidickson-dev/Search-Algorithm-Engine/actions" style="display: inline-block; background: #e5e7eb; color: #111827; padding: 10px 14px; border-radius: 8px; text-decoration: none; font-weight: 600;">CI Status</a>
+      <div class="grid">
+        <section class="card" aria-label="Search">
+          <div class="split">
+            <h2>Search</h2>
+            <div class="row">
+              <span class="pill"><strong id="corpusCount">0</strong> docs</span>
+              <span class="pill"><strong id="tokenCount">0</strong> terms</span>
+              <span class="pill"><span id="status" class="mono">loading…</span></span>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: 10px;">
+            <input id="query" class="input" placeholder='Try: "fast api" AND NOT database' />
+          </div>
+          <div class="row" style="margin-top: 10px;">
+            <button id="searchBtn" class="btn" disabled>Search</button>
+            <button id="clearBtn" class="btn secondary" disabled>Clear</button>
+            <span class="pill"><span class="mono">NOT &gt; AND &gt; OR</span></span>
+          </div>
+
+          <div class="row" style="margin-top: 10px;">
+            <label class="pill" style="cursor: pointer;">
+              <input id="files" type="file" multiple accept=".txt" style="display:none" />
+              <span>Load local <span class="mono">.txt</span> files</span>
+            </label>
+            <span class="small">Local files are processed only in your browser.</span>
+          </div>
+
+          <div id="error" class="error" style="margin-top: 10px;"></div>
+
+          <div class="results" id="results"></div>
+
+          <div class="footer">
+            <div>Examples:</div>
+            <div class="kvs">
+              <div class="mono">"fast api"</div><div>phrase query</div>
+              <div class="mono">fast api</div><div>implicit AND</div>
+              <div class="mono">fast OR api AND NOT database</div><div>precedence: NOT &gt; AND &gt; OR</div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="card" aria-label="About">
+          <h2>About</h2>
+          <p class="small" style="margin-top: 0; line-height: 1.6;">
+            This is a static GitHub Pages demo. It loads <code>docs/public/corpus.json</code> (or your uploaded text files), builds a positional inverted index in-memory, evaluates boolean queries (including phrases), and ranks matches using TF‑IDF cosine similarity.
+          </p>
+          <div class="row" style="margin-top: 12px;">
+            <a class="btn secondary" style="text-decoration:none;" href="https://github.com/kanyingidickson-dev/Search-Algorithm-Engine">Repository</a>
+            <a class="btn secondary" style="text-decoration:none;" href="https://github.com/kanyingidickson-dev/Search-Algorithm-Engine/actions">Actions</a>
+          </div>
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 14px 0;" />
+          <div class="small">
+            If you want the full Python engine (same query language), run:
+            <pre class="mono" style="white-space: pre-wrap; margin: 10px 0 0; background: rgba(0,0,0,0.25); border: 1px solid var(--border); padding: 10px; border-radius: 12px;">python -m src.cli --data data/raw --query "\"fast api\" AND database"</pre>
+          </div>
+        </aside>
       </div>
-
-      <h2 style="margin: 28px 0 10px; font-size: 20px;">Try it locally</h2>
-      <pre style="background: #0b1020; color: #e5e7eb; padding: 14px 16px; border-radius: 10px; overflow-x: auto;">pip install -r requirements.txt
-python -m src.cli --data data/raw --query "\"fast api\" AND database"</pre>
-
-      <h2 style="margin: 28px 0 10px; font-size: 20px;">Query examples</h2>
-      <ul style="margin: 0; padding-left: 18px; color: #111827; line-height: 1.7;">
-        <li><code>"fast api"</code> (phrase query)</li>
-        <li><code>fast AND api</code></li>
-        <li><code>fast OR api AND NOT database</code> (NOT &gt; AND &gt; OR)</li>
-        <li><code>fast api</code> (implicit AND)</li>
-      </ul>
-
-      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;" />
-      <p style="margin: 0; color: #6b7280; font-size: 14px;">GitHub Pages is currently served from <code>/docs</code> on the <code>main</code> branch. The React UI build can be deployed separately via the <code>gh-pages</code> branch workflow.</p>
     </div>
+
+    <script>
+      function tokenize(text) {
+        return (text || "")
+          .toLowerCase()
+          .replace(/[^a-z0-9\s]+/g, " ")
+          .split(/\s+/)
+          .filter(Boolean);
+      }
+
+      function scanTokens(query) {
+        const tokens = [];
+        let i = 0;
+        while (i < query.length) {
+          const ch = query[i];
+          if (/\s/.test(ch)) { i++; continue; }
+          if (ch === '"') {
+            i++;
+            const start = i;
+            while (i < query.length && query[i] !== '"') i++;
+            const phrase = query.slice(start, i);
+            if (i < query.length && query[i] === '"') i++;
+            tokens.push({ kind: "PHRASE", value: phrase });
+            continue;
+          }
+          const start = i;
+          while (i < query.length && !/\s/.test(query[i]) && query[i] !== '"') i++;
+          const word = query.slice(start, i);
+          const upper = word.toUpperCase();
+          if (upper === "AND" || upper === "OR" || upper === "NOT") {
+            tokens.push({ kind: upper, value: upper });
+          } else {
+            tokens.push({ kind: "WORD", value: word });
+          }
+        }
+        return tokens;
+      }
+
+      function parseQuery(query) {
+        const tokens = scanTokens(query);
+        if (tokens.length === 0) throw new Error("Empty query");
+        let idx = 0;
+        const peek = () => (idx < tokens.length ? tokens[idx] : null);
+        const consume = (kind) => {
+          const t = peek();
+          if (!t) throw new Error("Unexpected end of query");
+          if (kind && t.kind !== kind) throw new Error(`Expected ${kind} but found ${t.kind}`);
+          idx++;
+          return t;
+        };
+        const startsPrimary = (t) => t && (t.kind === "WORD" || t.kind === "PHRASE" || t.kind === "NOT");
+
+        const parseOr = () => {
+          let left = parseAnd();
+          while (peek() && peek().kind === "OR") {
+            consume("OR");
+            const right = parseAnd();
+            left = { type: "OR", left, right };
+          }
+          return left;
+        };
+        const parseAnd = () => {
+          let left = parseNot();
+          while (true) {
+            const t = peek();
+            if (!t) break;
+            if (t.kind === "AND") {
+              consume("AND");
+              const right = parseNot();
+              left = { type: "AND", left, right };
+              continue;
+            }
+            if (startsPrimary(t)) {
+              const right = parseNot();
+              left = { type: "AND", left, right };
+              continue;
+            }
+            break;
+          }
+          return left;
+        };
+        const parseNot = () => {
+          if (peek() && peek().kind === "NOT") {
+            consume("NOT");
+            return { type: "NOT", node: parseNot() };
+          }
+          return parsePrimary();
+        };
+        const parsePrimary = () => {
+          const t = peek();
+          if (!t) throw new Error("Expected term");
+          if (t.kind === "WORD") {
+            const raw = consume("WORD").value;
+            const terms = tokenize(raw);
+            if (terms.length === 0) throw new Error("Empty term");
+            if (terms.length === 1) return { type: "TERM", value: terms[0] };
+            let node = { type: "TERM", value: terms[0] };
+            for (const term of terms.slice(1)) node = { type: "AND", left: node, right: { type: "TERM", value: term } };
+            return node;
+          }
+          if (t.kind === "PHRASE") {
+            const raw = consume("PHRASE").value;
+            const terms = tokenize(raw);
+            if (terms.length === 0) throw new Error("Empty phrase");
+            if (terms.length === 1) return { type: "TERM", value: terms[0] };
+            return { type: "PHRASE", terms };
+          }
+          throw new Error(`Unexpected token: ${t.value}`);
+        };
+
+        const ast = parseOr();
+        if (peek() !== null) throw new Error(`Unexpected token: ${peek().value}`);
+        return ast;
+      }
+
+      function iterPositiveTerms(node, negated = false, out = []) {
+        if (node.type === "TERM") {
+          if (!negated) out.push(node.value);
+          return out;
+        }
+        if (node.type === "PHRASE") {
+          if (!negated) out.push(...node.terms);
+          return out;
+        }
+        if (node.type === "NOT") return iterPositiveTerms(node.node, !negated, out);
+        if (node.type === "AND" || node.type === "OR") {
+          iterPositiveTerms(node.left, negated, out);
+          iterPositiveTerms(node.right, negated, out);
+          return out;
+        }
+        return out;
+      }
+
+      function buildIndex(docs) {
+        const termToDocTf = new Map();
+        const termToDocPos = new Map();
+        const docTokens = new Map();
+
+        for (const doc of docs) {
+          const tokens = tokenize(doc.text);
+          docTokens.set(doc.id, tokens);
+          const tf = new Map();
+          const pos = new Map();
+          for (let i = 0; i < tokens.length; i++) {
+            const t = tokens[i];
+            tf.set(t, (tf.get(t) || 0) + 1);
+            if (!pos.has(t)) pos.set(t, []);
+            pos.get(t).push(i);
+          }
+          for (const [term, c] of tf.entries()) {
+            if (!termToDocTf.has(term)) termToDocTf.set(term, new Map());
+            termToDocTf.get(term).set(doc.id, c);
+          }
+          for (const [term, arr] of pos.entries()) {
+            if (!termToDocPos.has(term)) termToDocPos.set(term, new Map());
+            termToDocPos.get(term).set(doc.id, arr);
+          }
+        }
+
+        return {
+          docs,
+          termToDocTf,
+          termToDocPos,
+          docTokens,
+          docIds: new Set(docs.map(d => d.id)),
+        };
+      }
+
+      function phraseDocs(terms, idx) {
+        if (!terms || terms.length === 0) return new Set();
+        if (terms.length === 1) {
+          const postings = idx.termToDocTf.get(terms[0]);
+          return new Set(postings ? Array.from(postings.keys()) : []);
+        }
+
+        const docSets = [];
+        for (const t of terms) {
+          const postings = idx.termToDocPos.get(t);
+          if (!postings) return new Set();
+          docSets.push(new Set(Array.from(postings.keys())));
+        }
+        let candidates = docSets[0];
+        for (const s of docSets.slice(1)) {
+          const inter = new Set();
+          for (const x of candidates) if (s.has(x)) inter.add(x);
+          candidates = inter;
+        }
+
+        const matches = new Set();
+        for (const docId of candidates) {
+          const posLists = terms.map(t => idx.termToDocPos.get(t).get(docId) || []);
+          const nextSets = posLists.slice(1).map(arr => new Set(arr));
+          for (const start of posLists[0]) {
+            let ok = true;
+            for (let off = 1; off <= nextSets.length; off++) {
+              if (!nextSets[off - 1].has(start + off)) { ok = false; break; }
+            }
+            if (ok) { matches.add(docId); break; }
+          }
+        }
+        return matches;
+      }
+
+      function evalNode(node, idx, allDocs) {
+        if (node.type === "TERM") {
+          const postings = idx.termToDocTf.get(node.value);
+          return new Set(postings ? Array.from(postings.keys()) : []);
+        }
+        if (node.type === "PHRASE") return phraseDocs(node.terms, idx);
+        if (node.type === "AND") {
+          const a = evalNode(node.left, idx, allDocs);
+          const b = evalNode(node.right, idx, allDocs);
+          const inter = new Set();
+          for (const x of a) if (b.has(x)) inter.add(x);
+          return inter;
+        }
+        if (node.type === "OR") {
+          const a = evalNode(node.left, idx, allDocs);
+          const b = evalNode(node.right, idx, allDocs);
+          const uni = new Set(a);
+          for (const x of b) uni.add(x);
+          return uni;
+        }
+        if (node.type === "NOT") {
+          const neg = evalNode(node.node, idx, allDocs);
+          const diff = new Set();
+          for (const x of allDocs) if (!neg.has(x)) diff.add(x);
+          return diff;
+        }
+        return new Set();
+      }
+
+      function idf(nDocs, df) {
+        return Math.log((nDocs + 1) / (df + 1)) + 1.0;
+      }
+      function l2(vec) {
+        let s = 0;
+        for (const v of Object.values(vec)) s += v * v;
+        return Math.sqrt(s);
+      }
+      function rank(queryTerms, idx, candidateDocs) {
+        const nDocs = idx.docs.length;
+        if (nDocs === 0) return [];
+
+        const queryTf = {};
+        for (const t of queryTerms) queryTf[t] = (queryTf[t] || 0) + 1;
+
+        const queryVec = {};
+        for (const [term, tf] of Object.entries(queryTf)) {
+          const postings = idx.termToDocTf.get(term);
+          const df = postings ? postings.size : 0;
+          if (!df) continue;
+          queryVec[term] = tf * idf(nDocs, df);
+        }
+        const qn = l2(queryVec);
+        if (qn === 0) return [];
+
+        const termCandidates = new Set();
+        for (const term of Object.keys(queryVec)) {
+          const postings = idx.termToDocTf.get(term);
+          if (!postings) continue;
+          for (const docId of postings.keys()) termCandidates.add(docId);
+        }
+        const docs = candidateDocs ? new Set([...candidateDocs].filter(x => termCandidates.has(x))) : termCandidates;
+
+        const results = [];
+        for (const docId of docs) {
+          const docVec = {};
+          for (const term of Object.keys(queryVec)) {
+            const postings = idx.termToDocTf.get(term);
+            const tf = postings ? postings.get(docId) : 0;
+            if (!tf) continue;
+            const df = postings.size;
+            docVec[term] = tf * idf(nDocs, df);
+          }
+          const dn = l2(docVec);
+          if (dn === 0) continue;
+          let dot = 0;
+          for (const term of Object.keys(queryVec)) dot += queryVec[term] * (docVec[term] || 0);
+          results.push({ docId, score: dot / (qn * dn) });
+        }
+        results.sort((a, b) => (b.score - a.score) || a.docId.localeCompare(b.docId));
+        return results;
+      }
+
+      function escapeHtml(s) {
+        return (s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function highlight(text, terms) {
+        if (!terms || terms.length === 0) return escapeHtml(text);
+        const uniq = Array.from(new Set(terms)).filter(Boolean);
+        if (uniq.length === 0) return escapeHtml(text);
+        const escaped = uniq.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+        const re = new RegExp(`\\b(${escaped.join("|")})\\b`, "gi");
+        return escapeHtml(text).replace(re, (m) => `<mark>${m}</mark>`);
+      }
+
+      function snippetOf(text, terms) {
+        const clean = (text || "").replace(/\s+/g, " ").trim();
+        if (!clean) return "";
+        const lower = clean.toLowerCase();
+        let pos = -1;
+        for (const t of terms || []) {
+          const p = lower.indexOf(String(t).toLowerCase());
+          if (p !== -1) { pos = p; break; }
+        }
+        const start = Math.max(0, (pos === -1 ? 0 : pos - 60));
+        const end = Math.min(clean.length, start + 200);
+        const slice = (start > 0 ? "…" : "") + clean.slice(start, end) + (end < clean.length ? "…" : "");
+        return slice;
+      }
+
+      const els = {
+        status: document.getElementById("status"),
+        corpusCount: document.getElementById("corpusCount"),
+        tokenCount: document.getElementById("tokenCount"),
+        query: document.getElementById("query"),
+        searchBtn: document.getElementById("searchBtn"),
+        clearBtn: document.getElementById("clearBtn"),
+        results: document.getElementById("results"),
+        error: document.getElementById("error"),
+        files: document.getElementById("files"),
+      };
+
+      let state = {
+        idx: null,
+        docsById: new Map(),
+      };
+
+      function setStatus(text, kind) {
+        els.status.textContent = text;
+        els.status.className = "mono" + (kind ? ` ${kind}` : "");
+      }
+
+      function renderResults(items, queryTerms) {
+        if (!items || items.length === 0) {
+          els.results.innerHTML = `<div class="result"><div class="top"><div class="doc">No results</div></div><div class="snippet">Try a different query or upload your own files.</div></div>`;
+          return;
+        }
+        const html = items.map((it, i) => {
+          const doc = state.docsById.get(it.docId);
+          const title = doc && doc.title ? doc.title : it.docId;
+          const snip = snippetOf(doc ? doc.text : "", queryTerms);
+          return `
+            <div class="result">
+              <div class="top">
+                <div class="rank">#${i + 1}</div>
+                <div class="doc">${escapeHtml(title)}</div>
+                <div class="score mono">score=${it.score.toFixed(4)}</div>
+              </div>
+              <div class="snippet">${highlight(snip, queryTerms)}</div>
+            </div>
+          `;
+        }).join("");
+        els.results.innerHTML = html;
+      }
+
+      async function loadCorpusFromJson(url) {
+        const resp = await fetch(url, { cache: "no-store" });
+        if (!resp.ok) throw new Error(`Failed to load corpus: ${resp.status}`);
+        const data = await resp.json();
+        if (!Array.isArray(data)) throw new Error("Invalid corpus.json (expected an array)");
+        return data.map((d, i) => ({
+          id: String(d.id || `doc_${i}`),
+          title: String(d.title || d.id || `Document ${i + 1}`),
+          text: String(d.text || ""),
+        }));
+      }
+
+      async function loadLocalFiles(files) {
+        const out = [];
+        for (const f of files) {
+          const text = await f.text();
+          out.push({ id: f.name, title: f.name, text });
+        }
+        return out;
+      }
+
+      function setCorpus(docs) {
+        state.docsById = new Map(docs.map(d => [d.id, d]));
+        state.idx = buildIndex(docs);
+        els.corpusCount.textContent = String(docs.length);
+        els.tokenCount.textContent = String(state.idx.termToDocTf.size);
+        els.searchBtn.disabled = false;
+        els.clearBtn.disabled = false;
+        setStatus("ready", "ok");
+      }
+
+      function doSearch() {
+        els.error.textContent = "";
+        const q = els.query.value || "";
+        let ast;
+        try {
+          ast = parseQuery(q);
+        } catch (e) {
+          els.error.textContent = e && e.message ? e.message : String(e);
+          els.results.innerHTML = "";
+          return;
+        }
+
+        const allDocs = state.idx.docIds;
+        const candidates = evalNode(ast, state.idx, allDocs);
+        const positiveTerms = iterPositiveTerms(ast);
+
+        if (positiveTerms.length === 0) {
+          const docIds = Array.from(candidates).sort();
+          const items = docIds.slice(0, 25).map((docId) => ({ docId, score: 0 }));
+          renderResults(items, []);
+          return;
+        }
+
+        const ranked = rank(positiveTerms, state.idx, candidates).slice(0, 25);
+        renderResults(ranked, positiveTerms);
+      }
+
+      els.searchBtn.addEventListener("click", doSearch);
+      els.query.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          doSearch();
+        }
+      });
+      els.clearBtn.addEventListener("click", () => {
+        els.query.value = "";
+        els.error.textContent = "";
+        els.results.innerHTML = "";
+        els.query.focus();
+      });
+      els.files.addEventListener("change", async (e) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+        setStatus("loading local files…");
+        try {
+          const docs = await loadLocalFiles(files);
+          setCorpus(docs);
+          els.results.innerHTML = "";
+          els.query.focus();
+        } catch (err) {
+          els.error.textContent = err && err.message ? err.message : String(err);
+          setStatus("error", "error");
+        }
+      });
+
+      (async () => {
+        try {
+          setStatus("loading corpus…");
+          const docs = await loadCorpusFromJson("public/corpus.json");
+          setCorpus(docs);
+        } catch (err) {
+          els.error.textContent = err && err.message ? err.message : String(err);
+          setStatus("error", "error");
+        }
+      })();
+    </script>
   </body>
 </html>

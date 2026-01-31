@@ -44,7 +44,6 @@ python -m src.cli --data data/raw --query "python api"
 
 ## Future improvements
 
-- Phrase queries / positional index
 - Stopword lists and stemming options
 - Field weighting (title vs body)
 - Persisting the index to disk

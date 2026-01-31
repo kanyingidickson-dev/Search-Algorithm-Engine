@@ -1,0 +1,22 @@
+[
+  {
+    "id": "intro",
+    "title": "Search Algorithm Engine (Overview)",
+    "text": "Search Algorithm Engine is a small handwritten text search engine. It builds an inverted index, scores with TF-IDF, and ranks with cosine similarity. It supports phrase queries and boolean operators."
+  },
+  {
+    "id": "phrases",
+    "title": "Phrase Queries",
+    "text": "Phrase queries match adjacent terms in order. For example, the phrase \"fast api\" matches documents containing fast api next to each other."
+  },
+  {
+    "id": "boolean",
+    "title": "Boolean Operators",
+    "text": "Boolean operators supported are AND, OR, and NOT. Precedence is NOT, then AND, then OR. Implicit AND is also supported: writing fast api means fast AND api."
+  },
+  {
+    "id": "ranking",
+    "title": "Ranking",
+    "text": "Ranking uses TF-IDF weighting and cosine similarity. IDF is smoothed as log((N + 1) / (df + 1)) + 1 to avoid division-by-zero."
+  }
+]
