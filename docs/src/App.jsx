@@ -153,7 +153,7 @@ function App() {
     <div className={`min-h-screen flex flex-col items-center px-4 transition-colors duration-300 ${darkMode ? 'bg-gray-900' : 'bg-gray-50'}`}>
       <header className="w-full max-w-xl py-8 text-center" role="banner">
         <div className="flex flex-col items-center gap-2">
-          <img src="/logo.svg" alt="Logo" className="h-12 w-12 mb-2" aria-hidden="true" />
+          <img src="logo.svg" alt="Logo" className="h-12 w-12 mb-2" aria-hidden="true" />
           <h1 className="text-3xl font-bold mb-2 font-sans">Search Algorithm Engine</h1>
         </div>
         <p className={`font-sans ${darkMode ? 'text-gray-300' : 'text-gray-700'}`}>Search documents locally with fast and accurate results.</p>

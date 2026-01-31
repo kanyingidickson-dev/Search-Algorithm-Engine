@@ -10,9 +10,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -20,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd docs
-          npm install
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
       - name: Build static site
         run: |
           cd docs

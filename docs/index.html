@@ -5,10 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Search Algorithm Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="/dist/output.css" rel="stylesheet">
   </head>
   <body>
-    <div id="root"></div>
-    <script src="main.js"></script>
+    <div style="max-width: 860px; margin: 0 auto; padding: 48px 20px; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;">
+      <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+        <img src="public/logo.svg" alt="Search Algorithm Engine" width="56" height="56" />
+        <div>
+          <h1 style="margin: 0; font-size: 32px; font-weight: 700;">Search Algorithm Engine</h1>
+          <p style="margin: 8px 0 0; color: #444;">A small, handwritten text search engine with phrase queries and boolean operators.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0;">
+        <a href="https://github.com/kanyingidickson-dev/Search-Algorithm-Engine" style="display: inline-block; background: #1f2937; color: #fff; padding: 10px 14px; border-radius: 8px; text-decoration: none; font-weight: 600;">View Repository</a>
+        <a href="https://github.com/kanyingidickson-dev/Search-Algorithm-Engine/actions" style="display: inline-block; background: #e5e7eb; color: #111827; padding: 10px 14px; border-radius: 8px; text-decoration: none; font-weight: 600;">CI Status</a>
+      </div>
+
+      <h2 style="margin: 28px 0 10px; font-size: 20px;">Try it locally</h2>
+      <pre style="background: #0b1020; color: #e5e7eb; padding: 14px 16px; border-radius: 10px; overflow-x: auto;">pip install -r requirements.txt
+python -m src.cli --data data/raw --query "\"fast api\" AND database"</pre>
+
+      <h2 style="margin: 28px 0 10px; font-size: 20px;">Query examples</h2>
+      <ul style="margin: 0; padding-left: 18px; color: #111827; line-height: 1.7;">
+        <li><code>"fast api"</code> (phrase query)</li>
+        <li><code>fast AND api</code></li>
+        <li><code>fast OR api AND NOT database</code> (NOT &gt; AND &gt; OR)</li>
+        <li><code>fast api</code> (implicit AND)</li>
+      </ul>
+
+      <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;" />
+      <p style="margin: 0; color: #6b7280; font-size: 14px;">GitHub Pages is currently served from <code>/docs</code> on the <code>main</code> branch. The React UI build can be deployed separately via the <code>gh-pages</code> branch workflow.</p>
+    </div>
   </body>
 </html>
